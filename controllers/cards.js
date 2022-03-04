@@ -22,6 +22,7 @@ const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findOne({ _id: cardId })
+    .orFail(new NotFoundError('Карточка не найдена'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Попытка удалить чужую карточку');
