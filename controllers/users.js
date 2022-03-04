@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { NotFoundError, ConflictError } = require('../errors');
+const { NotFoundError, ConflictError, BadRequestError } = require('../errors');
 const User = require('../models/user');
 
 const getUsers = (req, res, next) => {
@@ -56,8 +56,12 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.code === 11000) next(new ConflictError('Email занят'));
-      else next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы неккоректные данные при создании пользователя'));
+      }
+      if (err.code === 11000) {
+        next(new ConflictError('Email занят'));
+      } else next(err);
     });
 };
 
@@ -73,7 +77,13 @@ const updateUser = (req, res, next) => {
     .then((data) => {
       res.status(200).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы неккоректные данные при обновлении информации о пользователе'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const updateUserAvatar = (req, res, next) => {
@@ -83,7 +93,13 @@ const updateUserAvatar = (req, res, next) => {
     .then((data) => {
       res.status(200).send(data);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы неккоректные данные при обновлении аватара пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const login = (req, res, next) => {
