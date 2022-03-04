@@ -28,13 +28,9 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Попытка удалить чужую карточку');
       }
 
-      Card.deleteOne({ _id: cardId })
-        .then((deletedCard) => {
-          if (deletedCard) {
-            res.status(200).send(card);
-          } else {
-            throw new NotFoundError('Карточка не найдена');
-          }
+      return Card.deleteOne({ _id: cardId })
+        .then(() => {
+          res.send({ message: 'Карточка удалена' });
         });
     })
     .catch(next);
