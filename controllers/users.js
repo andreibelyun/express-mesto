@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { NotFoundError } = require('../errors');
+const { NotFoundError, ConflictError } = require('../errors');
 const User = require('../models/user');
 
 const getUsers = (req, res, next) => {
@@ -55,7 +55,10 @@ const createUser = (req, res, next) => {
         email: user.email,
       });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === 11000) next(new ConflictError('Email занят'));
+      else next(err);
+    });
 };
 
 const updateOptions = {

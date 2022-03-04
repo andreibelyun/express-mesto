@@ -1,4 +1,8 @@
+const validator = require('validator');
 const { celebrate, Joi } = require('celebrate');
+
+const emailValidator = (email) => validator.isEmail(email);
+const linkValidator = (link) => validator.isURL(link);
 
 const linkRegEx = /^((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
 
@@ -39,10 +43,34 @@ const validateUserAvatar = celebrate({
   }),
 });
 
+const validateUserId = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().length(24).hex().required(),
+  }),
+});
+
+const validateCardId = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).hex().required(),
+  }),
+});
+
+// const validateParam = (paramName) => {
+//   celebrate({
+//     params: Joi.object().keys({
+//       [paramName]: Joi.string().length(24).hex().required(),
+//     }),
+//   });
+// };
+
 module.exports = {
+  linkValidator,
+  emailValidator,
   validateRegisterData,
   validateLoginData,
   validateCardData,
   validateUserData,
   validateUserAvatar,
+  validateUserId,
+  validateCardId,
 };
