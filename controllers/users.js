@@ -93,7 +93,7 @@ const login = (req, res, next) => {
           sameSite: true,
           maxAge: 1000 * 60 * 60 * 24 * 7, // s*m*h*d*w
         })
-        .end();
+        .send({ message: 'Логин прошёл успешно' });
     })
     .catch(next);
 };
